@@ -4,13 +4,19 @@ import java.util.Arrays;
 
 class Seq {
 
-    private int[] symbols;
+    private char[] symbols;
 
-    private Seq(int[] symbols) {
+    private Seq(char[] symbols) {
         this.symbols = symbols;
     }
 
-    static Seq create(int[] symbols) {
+    static Seq create(char[] symbols) {
+        for (int i = 0; i < symbols.length; i++) {
+            char symbol = symbols[i];
+            if (symbol != '1' && symbol != '2' && symbol != '3') {
+                throw new IllegalArgumentException("only 3 symbols allowed");
+            }
+        }
         return new Seq(symbols);
     }
 
@@ -22,7 +28,7 @@ class Seq {
         return isStar(symbols);
     }
 
-    private static boolean isStar(int[] a) {
+    private static boolean isStar(char[] a) {
         int h = a.length / 2;
         for (int j = 1; j < h; j++) {
             for (int i = 0; i < j; i++) {
@@ -34,7 +40,7 @@ class Seq {
         return true;
     }
 
-    private static boolean isSubseq(int[] a, int a_start, int a_length, int[] b, int b_start, int b_length) {
+    private static boolean isSubseq(char[] a, int a_start, int a_length, char[] b, int b_start, int b_length) {
         if (b_length < a_length) {
             return false;
         }
