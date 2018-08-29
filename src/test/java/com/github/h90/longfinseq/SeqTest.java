@@ -76,7 +76,12 @@ class SeqTest {
     void expand() {
         assertEquals("1112", expand("1{3}2"));
         assertEquals("3333333333333333333311333333333333", expand("3{20}1{2}3{12}"));
-        assertEquals(216, expand("12{2}131{7}3{2}1313{8}13{5}13{20}1{2}3{53}13{108}").length());
-        assertTrue(seq(expand("12{2}131{7}3{2}1313{8}13{5}13{20}1{2}3{53}13{108}")).isStar());
+    }
+
+    @Test
+    void special() {
+        String specialSequence = expand("12{2}131{7}3{2}1313{8}13{5}13{20}1{2}3{53}13{108}");
+        assertEquals(216, specialSequence.length());
+        assertTrue(seq(specialSequence).isSpecial());
     }
 }

@@ -11,10 +11,9 @@ class Seq {
     }
 
     static Seq create(char[] symbols) {
-        for (int i = 0; i < symbols.length; i++) {
-            char symbol = symbols[i];
+        for (char symbol : symbols) {
             if (symbol != '1' && symbol != '2' && symbol != '3') {
-                throw new IllegalArgumentException("only 3 symbols allowed");
+                throw new IllegalArgumentException("only 1, 2 or 3 allowed");
             }
         }
         return new Seq(symbols);
@@ -26,6 +25,39 @@ class Seq {
 
     boolean isStar() {
         return isStar(symbols);
+    }
+
+    boolean isSpecial() {
+        if (symbols.length % 2 != 0) {
+            return false;
+        }
+        for (int i = symbols.length / 2; i < symbols.length; i++) {
+            if (symbols[i] != '3') {
+                return false;
+            }
+        }
+        if (symbols[symbols.length / 2 - 1] != '1') {
+            return false;
+        }
+        if (!isStar()) {
+            return false;
+        }
+        return eachSliceContains1(symbols);
+    }
+
+    private static boolean eachSliceContains1(char[] a) {
+        int h = a.length / 2;
+        outer:
+        for (int i = 0; i < h - 1; i++) {
+            int j_limit = 2 * i + 2;
+            for (int j = i; j < j_limit; j++) {
+                if (a[j] == '1') {
+                    continue outer;
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     private static boolean isStar(char[] a) {
