@@ -4,55 +4,48 @@ import java.util.Arrays;
 
 class Seq {
 
-    private int start;
-
-    private int length;
-
     private int[] symbols;
 
-    private Seq(int start, int length, int[] symbols) {
-        this.start = start;
-        this.length = length;
+    private Seq(int[] symbols) {
         this.symbols = symbols;
     }
 
     static Seq create(int[] symbols) {
-        return new Seq(0, symbols.length, symbols);
+        return new Seq(symbols);
     }
 
     boolean isSubseq(Seq other) {
-        int[] a = this.symbols;
-        int[] b = other.symbols;
-        return isSubseq(a, b);
+        return isSubseq(this.symbols, 0, symbols.length, other.symbols, 0, other.symbols.length);
     }
 
     boolean isStar() {
-        return isStar(this.symbols);
+        return isStar(symbols);
     }
 
-    static boolean isStar(int[] a) {
+    private static boolean isStar(int[] a) {
         int h = a.length / 2;
-        for (int i = 0; i < h; i++) {
-//            new Seq(Arrays.copyOfRange(a, i, 2 * i));
+        for (int j = 1; j < h; j++) {
+            for (int i = 0; i < j; i++) {
+                if (isSubseq(a, i, i + 2, a, j, j + 2)) {
+                    return false;
+                }
+            }
         }
-        return false;
+        return true;
     }
 
-    Seq slice(int start, int end) {
-        return new Seq(start, end - start, symbols);
-    }
-
-    static boolean isSubseq(int[] a, int[] b) {
-        int b_length = b.length;
-        if (b_length < a.length) {
+    private static boolean isSubseq(int[] a, int a_start, int a_length, int[] b, int b_start, int b_length) {
+        if (b_length < a_length) {
             return false;
         }
-        int possibleMisses = b_length - a.length;
-        int pos_b = 0;
-        for (int i = 0; i < a.length; i++) {
+        int possibleMisses = b_length - a_length;
+        int pos_b = b_start;
+        int a_end = a_start + a_length;
+        int b_end = b_start + b_length;
+        for (int i = a_start; i < a_end; i++) {
             int sym = a[i];
             while (sym != b[pos_b++]) {
-                if (pos_b == b_length) {
+                if (pos_b == b_end) {
                     return false;
                 }
                 if (possibleMisses-- == 0) {
@@ -66,8 +59,7 @@ class Seq {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = start; i < length; i++) {
-            int symbol = symbols[i];
+        for (int symbol : symbols) {
             sb.append(Character.valueOf((char) symbol));
         }
         return sb.toString();
@@ -78,11 +70,11 @@ class Seq {
         if (!(obj instanceof Seq)) {
             return false;
         }
-        return ((Seq) obj).isSubseq(this) && isSubseq(((Seq) obj));
+        return Arrays.equals(symbols, ((Seq) obj).symbols);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(Arrays.copyOfRange(symbols, start, start + length));
+        return Arrays.hashCode(symbols);
     }
 }
